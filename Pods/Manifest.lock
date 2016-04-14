@@ -1,0 +1,45 @@
+PODS:
+  - Bolts (1.6.0):
+    - Bolts/AppLinks (= 1.6.0)
+    - Bolts/Tasks (= 1.6.0)
+  - Bolts/AppLinks (1.6.0):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.6.0)
+  - FacebookImagePicker (2.0.9):
+    - FBSDKCoreKit (~> 4.8.0)
+    - FBSDKLoginKit (~> 4.8.0)
+    - SDWebImage (~> 3.7.2)
+  - FBSDKCoreKit (4.8.0):
+    - Bolts (~> 1.1)
+    - FBSDKCoreKit/arc (= 4.8.0)
+    - FBSDKCoreKit/no-arc (= 4.8.0)
+  - FBSDKCoreKit/arc (4.8.0):
+    - Bolts (~> 1.1)
+  - FBSDKCoreKit/no-arc (4.8.0):
+    - Bolts (~> 1.1)
+    - FBSDKCoreKit/arc
+  - FBSDKLoginKit (4.8.0):
+    - FBSDKCoreKit
+  - Koloda (2.0.10):
+    - pop (~> 1.0)
+  - pop (1.0.9)
+  - SDWebImage (3.7.5):
+    - SDWebImage/Core (= 3.7.5)
+  - SDWebImage/Core (3.7.5)
+
+DEPENDENCIES:
+  - FacebookImagePicker
+  - FBSDKCoreKit
+  - FBSDKLoginKit
+  - Koloda
+
+SPEC CHECKSUMS:
+  Bolts: f52a250053bb517ca874523c3913776359ab3def
+  FacebookImagePicker: b4a3ab14d6af5e39a28c9a5d53330cc160491d1e
+  FBSDKCoreKit: 66a935d17b6e00b6b64e604f2eb9b72c9ab7deb8
+  FBSDKLoginKit: d893fcbb98d854496925e9ff73c67b896982d3c4
+  Koloda: 10f747feeff5e425061f78e5ce17208783e34a99
+  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+
+COCOAPODS: 0.39.0
