@@ -3,11 +3,18 @@ platform :ios, '8.0'
 # Uncomment this line if you're using Swift
 use_frameworks!
 
+source 'https://github.com/CocoaPods/Specs.git'
+
 target 'CSCI490 App2' do
 	pod "FacebookImagePicker"
     pod "FBSDKCoreKit"
     pod "FBSDKLoginKit"
     pod "Koloda"
+    pod "SlackTextViewController"
+    pod "SnapKit"
+    
+#    pod 'TwilioIPMessagingClient', :podspec => 'https://media.twiliocdn.com/sdk/rtc/ios/ip-messaging/v0.13/TwilioIPMessagingClient.podspec'
+#    pod 'TwilioCommon', :podspec => 'https://media.twiliocdn.com/sdk/rtc/ios/common/v0.1/TwilioCommon.podspec'
 end
 
 target 'CSCI490 App2Tests' do

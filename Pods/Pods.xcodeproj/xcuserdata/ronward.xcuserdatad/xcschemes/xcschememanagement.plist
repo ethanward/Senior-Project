@@ -39,6 +39,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>SlackTextViewController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SnapKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>pop.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -72,17 +82,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>74294661E474584AAA3B5437262B7D7A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8EB6B070A9EA0754112EEF2786E8F5DF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9AA2AAA92FB91AD66AAE3951C9A1A87E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>DE561191A808F901E2F40385BA8C1474</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>EB49ED182B375A84394420F59CE83C10</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F2809E030613CB38460C9825D439F30D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

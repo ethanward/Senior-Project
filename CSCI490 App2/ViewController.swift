@@ -10,7 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 
-var localUsers: [(user: BackendlessUser, images: [UserImage])] = []
+var matches: [(user: BackendlessUser, images: [UserImage])] = []
 
 class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     
@@ -20,14 +20,19 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     let loginManager = FBSDKLoginManager()
     var backendless = Backendless.sharedInstance()
     
+    var matchList: [String] = []
+    var leftList: [String] = []
+    var rightList: [String] = []
+    
     //var uvc:ChatObject = ChatObject()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        backendless.initApp(APP_ID, secret:SECRET_KEY, version:VERSION_NUM)
         
-        if(FBSDKAccessToken.currentAccessToken() == nil)
+        backendless.initApp(APP_ID, secret:SECRET_KEY, version:VERSION_NUM)
+
+        if(backendless.userService.isStayLoggedIn == false)// && self.backendless.userService.isValidUserToken() == false)
         {
             print("Not logged in.")
             let loginButton = FBSDKLoginButton()
@@ -42,18 +47,27 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         {
 //            loginManager.logOut()
             print("Logged in.")
-            self.performSegueWithIdentifier("loggedIn", sender: self)
-            
+
         }
-        
-        
-        
     }
     
     override func viewDidAppear(animated: Bool) {
-        if(FBSDKAccessToken.currentAccessToken() != nil) // if logged in
+        if(backendless.userService.isStayLoggedIn)// && self.backendless.userService.isValidUserToken() == true)
         {
-            fetchLocalUsers()
+            // Split space-delimited into arrays
+            if(backendless.userService.currentUser.getProperty("leftList") as? String != nil) {
+                self.leftList = ((backendless.userService.currentUser.getProperty("leftList") as? String)?.characters.split{$0 == " "}.map(String.init))!
+            }
+            
+            if(backendless.userService.currentUser.getProperty("rightList") as? String != nil) {
+                self.rightList = ((backendless.userService.currentUser.getProperty("rightList") as? String)?.characters.split{$0 == " "}.map(String.init))!
+            }
+            
+            if(backendless.userService.currentUser.getProperty("matchList") as? String != nil) {
+                self.matchList = ((backendless.userService.currentUser.getProperty("matchList") as? String)?.characters.split{$0 == " "}.map(String.init))!
+            }
+            
+            fetchMatches()
             self.performSegueWithIdentifier("loggedIn", sender: self)
         }
     }
@@ -88,20 +102,31 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     
     // MARK: - Backendless Functions
     
-    func fetchLocalUsers() {
-        // This function should load users within x miles that are not current users friends
-        do {
-            let users = try self.backendless.persistenceService.of(BackendlessUser.ofClass()).find()
-            //print("Users have been fetched (SYNC): \(users.data)")
-            
-            print("Num users: ", users.data.count)
+    func fetchMatches() {
+        var whereClause = "1=1"
+        let dataQuery = BackendlessDataQuery()
+        
+        for match in matchList {
+            whereClause = whereClause + " OR objectId = \'\(match)\'"
+        }
+        
+        whereClause = whereClause + " AND NOT (objectId = \'\(backendless.userService.currentUser.objectId)\')"
+        
+        print(whereClause)
+        dataQuery.whereClause = whereClause
+        
+        var error: Fault?
+        let users = self.backendless.persistenceService.of(BackendlessUser.ofClass()).find(dataQuery, fault: &error)
+        if error != nil {
+            print("Server reported an error: \(error)")
+        }
+        
+        if(users != nil) {
+            print(users.data.count)
             for i in 0...(users.data.count-1) {
-
                 let images = userImageRetrieval((users.data[i].getProperty("objectId") as? String)!)
-                localUsers.append((users.data[i] as! BackendlessUser, images))
+                matches.append((users.data[i] as! BackendlessUser, images))
             }
-        } catch (let e) {
-            print("Server reported an error (SYNC): \(e as! Fault)")
         }
     }
     
@@ -120,26 +145,19 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         
         var error: Fault?
         let bc = backendless.data.of(UserImage.ofClass()).find(dataQuery, fault: &error)
-        if error == nil {
-            //print("Images have been retrieved: \(bc.data)")
-        }
-        else {
+        if error != nil {
             print("Server reported an error: \(error)")
         }
         
         if(bc != nil) {
-            images = bc.data as! [UserImage]
+            let tmp = bc.data as! [UserImage]
+            images = tmp.sort {
+                return $0.imageNum < $1.imageNum
+            }
         }
-//        else {
-//            var defaultImage: UserImage
-//            
-//            defaultImage.
-//            images.append(UIImage(named: "green-square-Retina"))
-//        }
         
         return images
     }
-
 
     // MARK: - Facebook Login
     
@@ -159,6 +177,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
                 "email": "email"
             ]
             
+
             backendless.userService.loginWithFacebookSDK(
                 token,
                 fieldsMapping: fieldsMapping,
@@ -174,6 +193,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         }
         else
         {
+            print("Error.")
             print(error.localizedDescription)
         }
     }
@@ -181,7 +201,18 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
         print("User logged out.")
     }
-
-
+    
+//    func validUserTokenAsync() -> Bool {
+//        self.backendless.userService.isValidUserToken(
+//            { (let result : AnyObject!) -> () in
+//                print("isValidUserToken (ASYNC): \(result.boolValue)")
+//                return result.boolValue
+//            },
+//            error: { (let fault : Fault!) -> () in
+//                print("Server reported an error (ASYNC): \(fault)")
+//
+//            }
+//        )
+//    }
 }
 

@@ -11,16 +11,21 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nSH-Wk-A2T">
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PIP-2e-JS0">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                </imageView>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nSH-Wk-A2T">
+                            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        </imageView>
+                    </subviews>
+                </stackView>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="nSH-Wk-A2T" secondAttribute="trailing" id="DcM-Yc-vSf"/>
-                <constraint firstItem="nSH-Wk-A2T" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="LHA-QZ-mHI"/>
-                <constraint firstItem="nSH-Wk-A2T" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="e9Z-ZT-Ady"/>
-                <constraint firstAttribute="bottom" secondItem="nSH-Wk-A2T" secondAttribute="bottom" id="haI-fQ-N7j"/>
+                <constraint firstAttribute="bottom" secondItem="PIP-2e-JS0" secondAttribute="bottom" id="39e-hc-Qaa"/>
+                <constraint firstItem="PIP-2e-JS0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="AL2-gC-NFO"/>
+                <constraint firstAttribute="trailing" secondItem="PIP-2e-JS0" secondAttribute="trailing" id="TUM-Vj-nU1"/>
+                <constraint firstItem="PIP-2e-JS0" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="rHs-OF-4tr"/>
             </constraints>
             <connections>
                 <outlet property="overlayImageView" destination="nSH-Wk-A2T" id="JId-gr-S72"/>

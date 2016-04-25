@@ -13,6 +13,9 @@ private let overlayRightImageName = "yesOverlayImage"
 private let overlayLeftImageName = "noOverlayImage"
 
 class MatchPickerOverlayView: OverlayView {
+    
+//    @IBOutlet weak var userNameAge: UILabel!
+    
     @IBOutlet lazy var overlayImageView: UIImageView! = {
         [unowned self] in
         

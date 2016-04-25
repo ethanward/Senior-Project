@@ -90,6 +90,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-CSCI490 App2/FacebookImagePicker.framework"
   install_framework "Pods-CSCI490 App2/Koloda.framework"
   install_framework "Pods-CSCI490 App2/SDWebImage.framework"
+  install_framework "Pods-CSCI490 App2/SlackTextViewController.framework"
+  install_framework "Pods-CSCI490 App2/SnapKit.framework"
   install_framework "Pods-CSCI490 App2/pop.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -99,5 +101,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-CSCI490 App2/FacebookImagePicker.framework"
   install_framework "Pods-CSCI490 App2/Koloda.framework"
   install_framework "Pods-CSCI490 App2/SDWebImage.framework"
+  install_framework "Pods-CSCI490 App2/SlackTextViewController.framework"
+  install_framework "Pods-CSCI490 App2/SnapKit.framework"
   install_framework "Pods-CSCI490 App2/pop.framework"
 fi

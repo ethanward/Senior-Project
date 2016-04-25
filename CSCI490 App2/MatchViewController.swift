@@ -34,7 +34,7 @@ class MatchViewController: UIViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    func addGesturetoImageView()       {
+    func addGesturetoImageView() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
         self.imageView.addGestureRecognizer(swipeRight)
@@ -50,8 +50,6 @@ class MatchViewController: UIViewController {
             
             switch swipeGesture.direction {
             case UISwipeGestureRecognizerDirection.Right:
-                print("Swiped right")
-                
                 if(currentIndex > 0) {
                     currentIndex--
                     
@@ -63,9 +61,6 @@ class MatchViewController: UIViewController {
                 changeImage(currentIndex)
                 
             case UISwipeGestureRecognizerDirection.Left:
-                print("Swiped Left")
-                
-                
                 if(currentIndex < self.user!.images.count-1) {
                     
                     currentIndex++
@@ -88,16 +83,13 @@ class MatchViewController: UIViewController {
         
         transitionAnimation.duration = 0.5
         
-        
         transitionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transitionAnimation.fillMode = kCAFillModeBoth
         
         imageView.layer.addAnimation(transitionAnimation, forKey: "fadeAnimation")
-        
     }
     
-    func changeImage(index:Int){
-
+    func changeImage(index:Int) {
         if(user!.images.count > 0) {
             let imgUrl = user!.images[index].imageURL
             let url = NSURL(string: imgUrl!)
@@ -107,46 +99,26 @@ class MatchViewController: UIViewController {
         else {
             self.imageView.image = UIImage(named: "defaultImage")
         }
-        //image = UIImage(data: data!)!
-        
-        //self.textLabel.text = text
-        
-        
-        //        var url = NSURL(string: strs[index])
-        //
-        //        println("index: \(index) url: \(url?.absoluteString!)")
-        //
-        //        if let str = url?.absoluteString {
-        //          //  self.downloadImage(url! , imageView: self.imageView)
-        //        }
-        
-        
-        
-        //.image = UIImage(named: )
     }
     
     @IBAction func changeAdvert(sender: AnyObject) {
-        //println("value change")
-        print("change image \(self.pageControl.currentPage)")
+//        print("change image \(self.pageControl.currentPage)")
         
-        
-        if(self.currentIndex > self.pageControl.currentPage)
-        {
+        if(self.currentIndex > self.pageControl.currentPage) {
             changeImage(self.pageControl.currentPage)
             showAminationOnAdvert(kCATransitionFromRight)
-        }else if self.currentIndex < self.pageControl.currentPage{
+        }
+        else if self.currentIndex < self.pageControl.currentPage {
             changeImage(self.pageControl.currentPage)
             showAminationOnAdvert(kCATransitionFromLeft)
         }
         
         self.currentIndex = self.pageControl.currentPage
-        
     }
     
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     

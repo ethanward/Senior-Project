@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D27B4861CC55E800014E05F /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */; };
+		0D27B4881CC588730014E05F /* UserMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D27B4871CC588730014E05F /* UserMessage.swift */; };
+		0D4E0D5C1CC1B699006882F2 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */; };
 		0D4FB4DE1C9A943400E31432 /* UserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4DD1C9A943400E31432 /* UserImage.swift */; };
-		0D4FB4E51C9DDAB700E31432 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4E41C9DDAB700E31432 /* ChatViewController.m */; };
-		0D4FB4E81C9DDBF900E31432 /* ChatObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4E71C9DDBF900E31432 /* ChatObject.m */; };
-		0D4FB4EB1C9DFA8B00E31432 /* UsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4EA1C9DFA8B00E31432 /* UsersViewController.m */; };
 		0D4FB4ED1C9F4C4D00E31432 /* UserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */; };
 		0D4FB4EF1C9F627D00E31432 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4EE1C9F627D00E31432 /* UserTableViewCell.swift */; };
 		0D4FB4F11CA1C22200E31432 /* MatchPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4F01CA1C22200E31432 /* MatchPickerViewController.swift */; };
@@ -63,13 +63,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
+		0D27B4871CC588730014E05F /* UserMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserMessage.swift; sourceTree = "<group>"; };
+		0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		0D4FB4DD1C9A943400E31432 /* UserImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserImage.swift; sourceTree = "<group>"; };
-		0D4FB4E31C9DDAB700E31432 /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChatViewController.h; path = "CSCI490 App2/ChatViewController.h"; sourceTree = "<group>"; };
-		0D4FB4E41C9DDAB700E31432 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChatViewController.m; path = "CSCI490 App2/ChatViewController.m"; sourceTree = "<group>"; };
-		0D4FB4E61C9DDBF900E31432 /* ChatObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChatObject.h; path = "CSCI490 App2/ChatObject.h"; sourceTree = "<group>"; };
-		0D4FB4E71C9DDBF900E31432 /* ChatObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChatObject.m; path = "CSCI490 App2/ChatObject.m"; sourceTree = "<group>"; };
-		0D4FB4E91C9DFA8B00E31432 /* UsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UsersViewController.h; path = "CSCI490 App2/UsersViewController.h"; sourceTree = "<group>"; };
-		0D4FB4EA1C9DFA8B00E31432 /* UsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UsersViewController.m; path = "CSCI490 App2/UsersViewController.m"; sourceTree = "<group>"; };
 		0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
 		0D4FB4EE1C9F627D00E31432 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		0D4FB4F01CA1C22200E31432 /* MatchPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatchPickerViewController.swift; sourceTree = "<group>"; };
@@ -334,12 +331,6 @@
 				0D5802B21C90D386003B92E0 /* lib */,
 				0D5802AA1C90D2A3003B92E0 /* libz.tbd */,
 				0D5802A81C90D299003B92E0 /* libsqlite3.tbd */,
-				0D4FB4E61C9DDBF900E31432 /* ChatObject.h */,
-				0D4FB4E71C9DDBF900E31432 /* ChatObject.m */,
-				0D4FB4E31C9DDAB700E31432 /* ChatViewController.h */,
-				0D4FB4E41C9DDAB700E31432 /* ChatViewController.m */,
-				0D4FB4E91C9DFA8B00E31432 /* UsersViewController.h */,
-				0D4FB4EA1C9DFA8B00E31432 /* UsersViewController.m */,
 				0D5802771C90D271003B92E0 /* CSCI490 App2 */,
 				0D58028C1C90D271003B92E0 /* CSCI490 App2Tests */,
 				0D5802971C90D271003B92E0 /* CSCI490 App2UITests */,
@@ -365,11 +356,14 @@
 				0D5802781C90D271003B92E0 /* AppDelegate.swift */,
 				0D58027A1C90D271003B92E0 /* ViewController.swift */,
 				0D58038F1C90E0EB003B92E0 /* UserViewController.swift */,
-				0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */,
-				0D4FB4EE1C9F627D00E31432 /* UserTableViewCell.swift */,
 				0D4FB4F01CA1C22200E31432 /* MatchPickerViewController.swift */,
 				0D4FB4F51CA2789000E31432 /* MatchPickerOverlayView.swift */,
 				0D4FB4F71CA3166C00E31432 /* MatchViewController.swift */,
+				0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */,
+				0D4FB4EE1C9F627D00E31432 /* UserTableViewCell.swift */,
+				0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */,
+				0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */,
+				0D27B4871CC588730014E05F /* UserMessage.swift */,
 				0D4FB4DD1C9A943400E31432 /* UserImage.swift */,
 				0D58027C1C90D271003B92E0 /* Main.storyboard */,
 				0D4FB4F21CA20D0D00E31432 /* OverlayView.xib */,
@@ -967,14 +961,14 @@
 				0D4FB4F81CA3166C00E31432 /* MatchViewController.swift in Sources */,
 				0D4FB4F11CA1C22200E31432 /* MatchPickerViewController.swift in Sources */,
 				0D4FB4F61CA2789000E31432 /* MatchPickerOverlayView.swift in Sources */,
-				0D4FB4EB1C9DFA8B00E31432 /* UsersViewController.m in Sources */,
 				0D4FB4EF1C9F627D00E31432 /* UserTableViewCell.swift in Sources */,
-				0D4FB4E81C9DDBF900E31432 /* ChatObject.m in Sources */,
+				0D27B4881CC588730014E05F /* UserMessage.swift in Sources */,
 				0D58027B1C90D271003B92E0 /* ViewController.swift in Sources */,
+				0D27B4861CC55E800014E05F /* MessageTableViewCell.swift in Sources */,
 				0D4FB4DE1C9A943400E31432 /* UserImage.swift in Sources */,
 				0D5803901C90E0EB003B92E0 /* UserViewController.swift in Sources */,
+				0D4E0D5C1CC1B699006882F2 /* MessageViewController.swift in Sources */,
 				0D4FB4ED1C9F4C4D00E31432 /* UserTableViewController.swift in Sources */,
-				0D4FB4E51C9DDAB700E31432 /* ChatViewController.m in Sources */,
 				0D5802791C90D271003B92E0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

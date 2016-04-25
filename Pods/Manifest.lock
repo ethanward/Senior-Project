@@ -26,12 +26,16 @@ PODS:
   - SDWebImage (3.7.5):
     - SDWebImage/Core (= 3.7.5)
   - SDWebImage/Core (3.7.5)
+  - SlackTextViewController (1.9.1)
+  - SnapKit (0.20.0)
 
 DEPENDENCIES:
   - FacebookImagePicker
   - FBSDKCoreKit
   - FBSDKLoginKit
   - Koloda
+  - SlackTextViewController
+  - SnapKit
 
 SPEC CHECKSUMS:
   Bolts: f52a250053bb517ca874523c3913776359ab3def
@@ -41,5 +45,7 @@ SPEC CHECKSUMS:
   Koloda: 10f747feeff5e425061f78e5ce17208783e34a99
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+  SlackTextViewController: 6b0d1030c53937226fc5358f217af2a34fc211cf
+  SnapKit: 5fce3c1bbbf1fbd31de9aa92f33eb9fa03f15650
 
 COCOAPODS: 0.39.0

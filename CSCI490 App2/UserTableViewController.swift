@@ -12,7 +12,6 @@ import UIKit
 
 class UserTableViewController: UITableViewController {
     
-    var data: [AnyObject] = []
     var backendless = Backendless.sharedInstance()
     var userId: String = ""
     
@@ -25,21 +24,20 @@ class UserTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(self.data.count)
-        return localUsers.count
+        return matches.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("UserTableViewCell", forIndexPath: indexPath) as! UserTableViewCell
-        print(localUsers)
-        print(indexPath.row)
-        let user = localUsers[indexPath.row]
+//        print(localUsers)
+//        print(indexPath.row)
+        let user = matches[indexPath.row]
         
         let images = user.images
         if(images.first != nil) {
             let url = NSURL(string: (images.first?.imageURL)!)
-            if let data = NSData(contentsOfURL: url!){
-                cell.userImage.image = UIImage(data: data)
+            if let imgData = NSData(contentsOfURL: url!){
+                cell.userImage.image = UIImage(data: imgData)
             }
         }
         else {
@@ -47,37 +45,51 @@ class UserTableViewController: UITableViewController {
         }
 
         cell.userName.text = user.user.name
-        print(user.user.name)
+//        print(user.user.name)
         //(cell.viewWithTag(1) as! UILabel).text = user.email
         return cell
     }
     
-    func userImageRetrieval() -> [AnyObject] {
-        
-        let dataQuery = BackendlessDataQuery()
-        let queryOptions = QueryOptions()
-        queryOptions.related = ["ownerId", "ownerId.objectId"];
-        dataQuery.queryOptions = queryOptions
-        
-        var error: Fault?
-        let bc = backendless.data.of(UserImage.ofClass()).find(dataQuery, fault: &error)
-        if error == nil {
-            print("Images have been retrieved: \(bc.data)")
-        }
-        else {
-            print("Server reported an error: \(error)")
-        }
-        
-        return bc.data
-    }
-    
-//    func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject) {
-//        // Get the new view controller using [segue destinationViewController].
-//        // Pass the selected object to the new view controller.
-//        var indexPath: NSIndexPath = tableView(forCell: sender)
-//        self.chat.returned = self
-//        self.chat.delegate = segue.destinationViewController
-//        (segue.destinationViewController as! ChatViewController).chat = chat
-//        chat.connectToUser(((data[indexPath.row] as! BackendlessUser)).objectId)
+//    func userImageRetrieval() -> [AnyObject] {
+//        
+//        let dataQuery = BackendlessDataQuery()
+//        let queryOptions = QueryOptions()
+//        queryOptions.related = ["ownerId", "ownerId.objectId"];
+//        dataQuery.queryOptions = queryOptions
+//        
+//        var error: Fault?
+//        let bc = backendless.data.of(UserImage.ofClass()).find(dataQuery, fault: &error)
+//        if error == nil {
+//            print("Images have been retrieved: \(bc.data)")
+//        }
+//        else {
+//            print("Server reported an error: \(error)")
+//        }
+//        
+//        return bc.data
 //    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+//        let userChatViewController = segue.destinationViewController as! ChatViewController
+//        
+//        if let selectedImageCell = sender as? UserTableViewCell {
+//            let indexPath = tableView.indexPathForCell(selectedImageCell)
+////            print(indexPath)
+//            let userId = localUsers[indexPath!.row].user.objectId // Should eventually be "friends", not local users
+//            
+//            userChatViewController.chatSetup(userId)
+//        }
+        
+        let messageViewController = segue.destinationViewController as! MessageViewController
+        
+        if let selectedImageCell = sender as? UserTableViewCell {
+            let indexPath = tableView.indexPathForCell(selectedImageCell)
+            //            print(indexPath)
+            let userId = matches[indexPath!.row].user.objectId // Should eventually be "friends", not local users
+            let userName = matches[indexPath!.row].user.getProperty("fb_first_name") as! String
+            
+            messageViewController.chatSetup(userId, userName: userName)
+        }
+
+    }
 }

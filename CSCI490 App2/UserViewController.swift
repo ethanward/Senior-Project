@@ -19,6 +19,8 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     @IBOutlet weak var userImage3: UIImageView!
     @IBOutlet weak var userImage4: UIImageView!
     @IBOutlet weak var userImage5: UIImageView!
+    @IBOutlet weak var userImage6: UIImageView!
+    @IBOutlet weak var userBio: UITextView!
     
     var backendless = Backendless.sharedInstance()
     var fbUserId: String?
@@ -31,7 +33,11 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+
         self.userName.title = backendless.userService.currentUser.name
+        self.userBio.text = backendless.userService.currentUser.getProperty("aboutMe") as? String
         self.fbUserId = backendless.userService.currentUser.getProperty("facebookId") as? String
         loadImages()
         
@@ -47,14 +53,18 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
 //        self.userImage5.addGestureRecognizer(singleTap)
         
         imagePicker.delegate = self
-        
         FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
     }
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touch: UITouch? = touches.first
-        if touch?.view == self.userImage1 || touch?.view == self.userImage2 || touch?.view == self.userImage3 || touch?.view == self.userImage4 || touch?.view == self.userImage5 {
-            
+        
+        if touch?.view != self.userBio {
+            self.userBio.resignFirstResponder()
+//            print(self.userBio.text)
+        }
+        
+        if touch?.view == self.userImage1 || touch?.view == self.userImage2 || touch?.view == self.userImage3 || touch?.view == self.userImage4 || touch?.view == self.userImage5 || touch?.view == self.userImage6 {
             self.imagePicked = (touch?.view?.tag)!
             print(self.imagePicked, " has been tapped by the user.")
             
@@ -70,6 +80,20 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         super.touchesEnded(touches, withEvent: event)
     }
     
+    
+    
+    func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            self.view.frame.origin.y -= keyboardSize.height
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            self.view.frame.origin.y += keyboardSize.height
+        }
+    }
+    
 //    func tapDetected() {
 //        print("Single Tap on imageview")
 //        
@@ -78,9 +102,14 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
 //        self.presentViewController(picker, animated: true, completion: { _ in })
 //    }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if(segue.identifier == "matchPicker") {
+            self.userBio.resignFirstResponder()
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 /*
     // MARK: UIImagePickerControllerDelegate
@@ -214,13 +243,24 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         }
     }
 */
+    
+    @IBAction func saveBio(sender: AnyObject) {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.backendless.userService.currentUser.updateProperties(["aboutMe" : self.userBio.text])
+            self.backendless.userService.update(self.backendless.userService.currentUser)
+            self.backendless.userService.update(self.backendless.userService.currentUser)
+            self.userBio.resignFirstResponder()
+        }
+    }
+    
+    
     // MARK: - Facebook functions
     
-    @IBAction func loadFBPicker(sender: AnyObject) {
-        let picker: OLFacebookImagePickerController = OLFacebookImagePickerController()
-        picker.delegate = self
-        self.presentViewController(picker, animated: true, completion: { _ in })
-    }
+//    @IBAction func loadFBPicker(sender: AnyObject) {
+//        let picker: OLFacebookImagePickerController = OLFacebookImagePickerController()
+//        picker.delegate = self
+//        self.presentViewController(picker, animated: true, completion: { _ in })
+//    }
     
 //    func facebookImagePicker(imagePicker: OLFacebookImagePickerController!, didSelectImage image: OLFacebookImage!) {
 //        print(imagePicker.selected)
@@ -246,6 +286,8 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
             if(i.imageNum == String(self.imagePicked)) {
                 let dataStore = Backendless.sharedInstance().data.of(UserImage.ofClass())
                 var error: Fault?
+                
+                print(url)
                 
                 i.imageURL = url.absoluteString
                 dataStore.save(i, fault: &error) as? UserImage
@@ -307,23 +349,21 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
                 
                 if(imageNum == "1") {
                     self.userImage1.image = UIImage(data: data)
-//                    self.userImage1.backgroundColor = UIColor.clearColor()
                 }
                 else if(imageNum == "2") {
                     self.userImage2.image = UIImage(data: data)
-//                    self.userImage2.backgroundColor = UIColor.clearColor()
                 }
                 else if(imageNum == "3") {
                     self.userImage3.image = UIImage(data: data)
-//                    self.userImage3.backgroundColor = UIColor.clearColor()
                 }
                 else if(imageNum == "4") {
                     self.userImage4.image = UIImage(data: data)
-//                    self.userImage4.backgroundColor = UIColor.clearColor()
                 }
                 else if(imageNum == "5") {
                     self.userImage5.image = UIImage(data: data)
-//                    self.userImage5.backgroundColor = UIColor.clearColor()
+                }
+                else if(imageNum == "6") {
+                    self.userImage6.image = UIImage(data: data)
                 }
             }
         }
@@ -336,7 +376,6 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         queryOptions.related = ["ownerId", "ownerId.objectId"];
         dataQuery.queryOptions = queryOptions
         whereClause = "ownerId = \'\(backendless.userService.currentUser.objectId)\'"
-        print(whereClause)
         dataQuery.whereClause = whereClause
     
         var error: Fault?
@@ -344,28 +383,9 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         
         if(bc != nil) {
             let images = bc.data as? [UserImage]
-            print("Count: ", images!.count)
         
             for img in images! {
-                print(img.imageNum)
-                
-                if(img.imageNum == "1") {
-                    let url = NSURL(string: img.imageURL!)
-                    downloadImage(url!, imageNum: img.imageNum!)
-                }
-                else if(img.imageNum == "2") {
-                    let url = NSURL(string: img.imageURL!)
-                    downloadImage(url!, imageNum: img.imageNum!)
-                }
-                else if(img.imageNum == "3") {
-                    let url = NSURL(string: img.imageURL!)
-                    downloadImage(url!, imageNum: img.imageNum!)
-                }
-                else if(img.imageNum == "4") {
-                    let url = NSURL(string: img.imageURL!)
-                    downloadImage(url!, imageNum: img.imageNum!)
-                }
-                else if(img.imageNum == "5") {
+                if(img.imageNum == "1" || img.imageNum == "2" || img.imageNum == "3" || img.imageNum == "4" || img.imageNum == "5" || img.imageNum == "6") {
                     let url = NSURL(string: img.imageURL!)
                     downloadImage(url!, imageNum: img.imageNum!)
                 }
