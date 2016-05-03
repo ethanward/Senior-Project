@@ -8,6 +8,7 @@
 
 import UIKit
 import SlackTextViewController
+import SnapKit
 
 class MessageViewController: SLKTextViewController {
     
@@ -208,6 +209,16 @@ class MessageViewController: SLKTextViewController {
         }
         else {
             cell.nameLabel.text = self.backendless.userService.currentUser.getProperty("fb_first_name") as? String
+        }
+        
+        
+        if(cell.nameLabel.text == self.connectToUserName) {
+            cell.nameLabel.textColor = UIColor.redColor()
+            cell.updateSubviewsLeft()
+        }
+        else {
+            cell.nameLabel.textColor = UIColor(red: 0/255.0, green: 128/255.0, blue: 64/255.0, alpha: 1.0)
+            cell.updateSubviewsRight()
         }
         
         cell.bodyLabel.text = message.message

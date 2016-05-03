@@ -10,7 +10,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CSCI490_App2" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="ViewController" customModule="CSCI490_App2" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -84,10 +84,11 @@
                                     <constraint firstItem="Pmo-Fe-oUa" firstAttribute="leading" secondItem="6Gv-dt-22b" secondAttribute="trailing" constant="8" symbolic="YES" id="41f-e0-B5O"/>
                                     <constraint firstItem="6Gv-dt-22b" firstAttribute="top" secondItem="Pmo-Fe-oUa" secondAttribute="top" id="4ti-XD-RwO"/>
                                     <constraint firstItem="pWG-dV-lsU" firstAttribute="top" secondItem="OD0-pR-Urr" secondAttribute="top" id="628-ej-vle"/>
+                                    <constraint firstItem="Pmo-Fe-oUa" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="bqF-Wh-sAU" secondAttribute="trailingMargin" constant="-15" id="Arz-Vq-NoO"/>
                                     <constraint firstItem="ZK6-Wy-MmS" firstAttribute="top" secondItem="Pmo-Fe-oUa" secondAttribute="bottom" constant="4" id="CQK-jS-hUe"/>
                                     <constraint firstItem="W1D-8H-Nfg" firstAttribute="leading" secondItem="ZK6-Wy-MmS" secondAttribute="leading" id="FUt-8f-AWD"/>
                                     <constraint firstItem="OD0-pR-Urr" firstAttribute="leading" secondItem="bqF-Wh-sAU" secondAttribute="leadingMargin" id="HNZ-b4-eyG"/>
-                                    <constraint firstItem="Pmo-Fe-oUa" firstAttribute="trailing" secondItem="ZK6-Wy-MmS" secondAttribute="trailing" id="IRT-4v-Ghd"/>
+                                    <constraint firstItem="ZK6-Wy-MmS" firstAttribute="trailing" secondItem="Pmo-Fe-oUa" secondAttribute="trailing" id="IRT-4v-Ghd"/>
                                     <constraint firstItem="6Gv-dt-22b" firstAttribute="bottom" secondItem="ZK6-Wy-MmS" secondAttribute="bottom" id="NQu-Mu-nwl"/>
                                     <constraint firstItem="6Gv-dt-22b" firstAttribute="leading" secondItem="OD0-pR-Urr" secondAttribute="leading" id="OLP-Te-43h"/>
                                     <constraint firstItem="W1D-8H-Nfg" firstAttribute="top" secondItem="pWG-dV-lsU" secondAttribute="top" id="TYe-Ae-XHX"/>
@@ -135,6 +136,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="User" id="EPq-G8-31E">
+                        <barButtonItem key="leftBarButtonItem" title="Logout" style="plain" id="zDq-jx-ioz">
+                            <connections>
+                                <action selector="logout:" destination="nQp-gK-Ujb" id="oj0-YJ-4Zm"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="play" id="qDm-yB-G8c">
                             <connections>
                                 <segue destination="i18-Je-2zo" kind="show" identifier="matchPicker" id="omG-Rd-gPX"/>
@@ -150,6 +156,7 @@
                         <outlet property="userImage5" destination="pWG-dV-lsU" id="Fed-os-oHE"/>
                         <outlet property="userImage6" destination="W1D-8H-Nfg" id="qnf-3F-En7"/>
                         <outlet property="userName" destination="EPq-G8-31E" id="KUR-jZ-Xzp"/>
+                        <segue destination="BYZ-38-t0r" kind="presentation" identifier="logout" id="VgC-gZ-ns9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Va-no-0GC" userLabel="First Responder" sceneMemberID="firstResponder"/>

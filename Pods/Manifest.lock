@@ -34,6 +34,7 @@ DEPENDENCIES:
   - FBSDKCoreKit
   - FBSDKLoginKit
   - Koloda
+  - SDWebImage
   - SlackTextViewController
   - SnapKit
 

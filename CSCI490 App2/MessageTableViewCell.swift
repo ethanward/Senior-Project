@@ -24,6 +24,8 @@ class MessageTableViewCell: UITableViewCell {
         return label
     }()
     
+//    var userId: String?
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -49,6 +51,32 @@ class MessageTableViewCell: UITableViewCell {
             make.top.equalTo(nameLabel.snp_bottom).offset(1)
             make.left.equalTo(self).offset(20)
             make.right.equalTo(self).offset(-20)
+            make.bottom.equalTo(self).offset(-10)
+        }
+    }
+    
+    func updateSubviewsRight() {
+        nameLabel.snp_remakeConstraints { (make) -> Void in
+            make.top.equalTo(self).offset(10)
+            make.right.equalTo(self).offset(-20)
+        }
+        
+        bodyLabel.snp_remakeConstraints { (make) -> Void in
+            make.top.equalTo(nameLabel.snp_bottom).offset(1)
+            make.right.equalTo(self).offset(-20)
+            make.bottom.equalTo(self).offset(-10)
+        }
+    }
+    
+    func updateSubviewsLeft() {
+        nameLabel.snp_remakeConstraints { (make) -> Void in
+            make.top.equalTo(self).offset(10)
+            make.left.equalTo(self).offset(20)
+        }
+        
+        bodyLabel.snp_remakeConstraints { (make) -> Void in
+            make.top.equalTo(nameLabel.snp_bottom).offset(1)
+            make.left.equalTo(self).offset(20)
             make.bottom.equalTo(self).offset(-10)
         }
     }

@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 import FacebookImagePicker
+import SDWebImage
 
 class UserViewController: UIViewController, OLFacebookImagePickerControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
@@ -28,6 +29,7 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     var photoArray: [UIImage]?
     var imagePicked = 0
     var userImageArray: [UserImage] = []
+    let loginManager = FBSDKLoginManager()
     let imagePicker = UIImagePickerController()
     
     override func viewDidLoad() {
@@ -39,7 +41,9 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         self.userName.title = backendless.userService.currentUser.name
         self.userBio.text = backendless.userService.currentUser.getProperty("aboutMe") as? String
         self.fbUserId = backendless.userService.currentUser.getProperty("facebookId") as? String
+
         loadImages()
+        loadMatches()
         
 //        requestImages()
         
@@ -51,9 +55,9 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
 //        self.userImage3.addGestureRecognizer(singleTap)
 //        self.userImage4.addGestureRecognizer(singleTap)
 //        self.userImage5.addGestureRecognizer(singleTap)
-        
+
         imagePicker.delegate = self
-        FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
+//        FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
     }
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -68,13 +72,17 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
             self.imagePicked = (touch?.view?.tag)!
             print(self.imagePicked, " has been tapped by the user.")
             
-            // For FBPicker
-            let picker: OLFacebookImagePickerController = OLFacebookImagePickerController()
-            picker.delegate = self
-            self.presentViewController(picker, animated: true, completion: { _ in })
+            if(FBSDKAccessToken.currentAccessToken().permissions.contains("user_photos") == false) {
+                // For normal picker
+                self.presentViewController(imagePicker, animated: true, completion: nil)
+            }
+            else {
+                // For FBPicker
+                let picker: OLFacebookImagePickerController = OLFacebookImagePickerController()
+                picker.delegate = self
+                self.presentViewController(picker, animated: true, completion: { _ in })
+            }
             
-            // For normal picker
-//            self.presentViewController(imagePicker, animated: true, completion: nil)
         }
         
         super.touchesEnded(touches, withEvent: event)
@@ -111,7 +119,7 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-/*
+
     // MARK: UIImagePickerControllerDelegate
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -121,128 +129,268 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         
-        let selectedImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+        var contains = false
+        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+//        var imageView : UIImageView = UIImageView()
+//        imageView.image = image
+    
+//        imageView.sd_imageURL()
+//        downloadImage(, imageNum: String(self.imagePicked))
+        
+        let imageData = UIImageJPEGRepresentation(image, 0.1)
+        
+        var url = String()
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            url = self.uploadAsync(imageData!, imageNum: String(self.imagePicked))
+            print("url - \(url)")
+        
+            for i in self.userImageArray {
+                if(i.imageNum == String(self.imagePicked)) {
+                    let dataStore = Backendless.sharedInstance().data.of(UserImage.ofClass())
+                    var error: Fault?
+                
+                    i.imageURL = url
+                    dataStore.save(i, fault: &error) as? UserImage
+                    contains = true
+                }
+            }
+        
+            if(!contains) {
+                let img = UserImage()
+                img.imageURL = url
+                img.imageNum = String(self.imagePicked)
+                img.user_Image_bcklsFK__ONE_TO_MANY = self.backendless.userService.currentUser.objectId
+            
+                self.backendless.data.of(UserImage.ofClass()).save(img)
+            }
+        }
         
         if(self.imagePicked == 1) {
-            self.userImage1.image = selectedImage
-            self.userImage1.backgroundColor = UIColor.clearColor()
+            self.userImage1.image = image
         }
         else if(self.imagePicked == 2) {
-            self.userImage2.image = selectedImage
-            self.userImage2.backgroundColor = UIColor.clearColor()
+            self.userImage2.image = image
         }
         else if(self.imagePicked == 3) {
-            self.userImage3.image = selectedImage
-            self.userImage3.backgroundColor = UIColor.clearColor()
+            self.userImage3.image = image
         }
         else if(self.imagePicked == 4) {
-            self.userImage4.image = selectedImage
-            self.userImage4.backgroundColor = UIColor.clearColor()
+            self.userImage4.image = image
         }
         else if(self.imagePicked == 5) {
-            self.userImage5.image = selectedImage
-            self.userImage5.backgroundColor = UIColor.clearColor()
+            self.userImage5.image = image
         }
         
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    func uploadAsync(data: NSData, imageNum: String) -> String {
+        var url = ""
+        let uploadUrl = "img/\(self.backendless.userService.currentUser.objectId)_\(imageNum).jpeg"
+        let savedFile = self.backendless.fileService.upload(uploadUrl, content: data, overwrite: true)
+            
+        url = savedFile.fileURL
+        
+        return url
+    }
+    
+    func userImageRetrieval(userId: String) -> [UserImage] {
+        var images: [UserImage] = []
+        
+        var whereClause = ""
+        let dataQuery = BackendlessDataQuery()
+        let queryOptions = QueryOptions()
+        queryOptions.related = ["ownerId", "ownerId.objectId"];
+        dataQuery.queryOptions = queryOptions
+        whereClause = "ownerId = \'\(userId)\'"
+        
+        //print(whereClause)
+        dataQuery.whereClause = whereClause
+        
+        var error: Fault?
+        let bc = backendless.data.of(UserImage.ofClass()).find(dataQuery, fault: &error)
+        if error != nil {
+            print("Server reported an error: \(error)")
+        }
+        
+        if(bc != nil) {
+            let tmp = bc.data as! [UserImage]
+            images = tmp.sort {
+                return $0.imageNum < $1.imageNum
+            }
+        }
+        
+        return images
+    }
+    
+    func loadMatches() {
+        var matchList: [String] = []
+        
+        if(backendless.userService.currentUser.getProperty("matchList") as? String != nil) {
+            matchList = ((backendless.userService.currentUser.getProperty("matchList") as? String)?.characters.split{$0 == " "}.map(String.init))!
+        }
+        
+        var whereClause = ""
+        let dataQuery = BackendlessDataQuery()
+        
+        if matchList.count > 0 {
+            whereClause = "objectId IN ("
+            for match in matchList {
+                whereClause = whereClause + "\'\(match)\', "
+            }
+            
+            // Remove last two characters and add ')'
+            whereClause.removeAtIndex(whereClause.endIndex.predecessor())
+            whereClause.removeAtIndex(whereClause.endIndex.predecessor())
+            whereClause = whereClause + ")"
+            
+            print(whereClause)
+            dataQuery.whereClause = whereClause
+            
+            var error: Fault?
+            let users = self.backendless.persistenceService.of(BackendlessUser.ofClass()).find(dataQuery, fault: &error)
+            if error != nil {
+                print("Server reported an error: \(error)")
+            }
+            
+            if(users != nil) {
+                print(users.data.count)
+                for i in 0...(users.data.count-1) {
+                    let images = userImageRetrieval((users.data[i].getProperty("objectId") as? String)!)
+                    matches.append((users.data[i] as! BackendlessUser, images))
+                }
+            }
+            
+            print("Matches - \(matches.count)")
+        }
+        else {
+            print("No matches :(")
+        }
+        
+        
+    }
 
     // Save userImages to userImages in backendless
-    @IBAction func savePhotos(sender: UIButton) {
-        let dataStore = Backendless.sharedInstance().data.of(UserImage.ofClass())
-        var error: Fault?
-        var newImageArray: [UserImage] = []
-        var dbContains: [Int] = [1, 2, 3, 4, 5]
-        
-        for img in self.userImageArray {
-            if(img.imageNum == 1 && self.userImage1.image != nil) {
-                img.image = self.userImage1.image
-            }
-            else if(img.imageNum == 2 && self.userImage2.image != nil) {
-                img.image = self.userImage2.image
-            }
-            else if(img.imageNum == 3 && self.userImage3.image != nil) {
-                img.image = self.userImage3.image
-            }
-            else if(img.imageNum == 4 && self.userImage4.image != nil) {
-                img.image = self.userImage4.image
-            }
-            else if(img.imageNum == 5 && self.userImage5.image != nil) {
-                img.image = self.userImage5.image
-            }
-            
-            newImageArray.append(img)
-            dbContains[img.imageNum!] = 0
-            
-            let updatedImage = dataStore.save(img, fault: &error) as? UserImage
-//            if error == nil {
-//                print("Image has been updated: \(updatedImage!.objectId)")
+//    @IBAction func savePhotos(sender: UIButton) {
+//        let dataStore = Backendless.sharedInstance().data.of(UserImage.ofClass())
+//        var error: Fault?
+//        var newImageArray: [UserImage] = []
+//        var dbContains: [Int] = [1, 2, 3, 4, 5]
+//        
+//        for img in self.userImageArray {
+//            if(img.imageNum == 1 && self.userImage1.image != nil) {
+//                img.image = self.userImage1.image
 //            }
-//            else {
-//                print("Server reported an error (2): \(error)")
+//            else if(img.imageNum == 2 && self.userImage2.image != nil) {
+//                img.image = self.userImage2.image
 //            }
-        }
-        
-        // For if DB does not have img for userImageX to replace
-        if(self.userImage1.image != nil && dbContains.contains(self.userImage1.tag)) {
-            print("No image 1")
-            let img = UserImage()
-            img.imageNum = self.userImage1.tag
-            //img.image = self.userImage1.image
-            img.imageURL = ""
-            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//            else if(img.imageNum == 3 && self.userImage3.image != nil) {
+//                img.image = self.userImage3.image
+//            }
+//            else if(img.imageNum == 4 && self.userImage4.image != nil) {
+//                img.image = self.userImage4.image
+//            }
+//            else if(img.imageNum == 5 && self.userImage5.image != nil) {
+//                img.image = self.userImage5.image
+//            }
+//            
+//            newImageArray.append(img)
+//            dbContains[img.imageNum!] = 0
+//            
+//            let updatedImage = dataStore.save(img, fault: &error) as? UserImage
+////            if error == nil {
+////                print("Image has been updated: \(updatedImage!.objectId)")
+////            }
+////            else {
+////                print("Server reported an error (2): \(error)")
+////            }
+//        }
+//        
+//        // For if DB does not have img for userImageX to replace
+//        if(self.userImage1.image != nil && dbContains.contains(self.userImage1.tag)) {
+//            print("No image 1")
+//            let img = UserImage()
+//            img.imageNum = self.userImage1.tag
+//            //img.image = self.userImage1.image
+//            img.imageURL = ""
+//            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//
+////            let fileName: String = String(format: "img/%0.0f.jpeg", NSDate().timeIntervalSince1970)
+////            backendless.fileService.upload(fileName, content: UIImageJPEGRepresentation(self.userImage1.image!, 0.1))
+//            
+//            backendless.data.of(UserImage.ofClass()).save(img)
+//        }
+//        
+//        if(self.userImage2.image != nil && dbContains.contains(self.userImage2.tag)) {
+//            print("No image 2")
+//            let img = UserImage()
+//            img.imageNum = self.userImage2.tag
+//            img.image = self.userImage2.image
+//            img.imageURL = ""
+//            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//        
+//            backendless.data.of(UserImage.ofClass()).save(img)
+//        }
+//        
+//        if(self.userImage3.image != nil && dbContains.contains(self.userImage3.tag)) {
+//            print("No image 3")
+//            let img = UserImage()
+//            img.imageNum = self.userImage3.tag
+//            img.image = self.userImage3.image
+//            img.imageURL = ""
+//            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//            
+//            backendless.data.of(UserImage.ofClass()).save(img)
+//        }
+//        
+//        if(self.userImage4.image != nil && dbContains.contains(self.userImage4.tag)) {
+//            print("No image 4")
+//            let img = UserImage()
+//            img.imageNum = self.userImage4.tag
+//            img.image = self.userImage4.image
+//            img.imageURL = ""
+//            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//            
+//            backendless.data.of(UserImage.ofClass()).save(img)
+//        }
+//        
+//        if(self.userImage5.image != nil && dbContains.contains(self.userImage5.tag)) {
+//            print("No image 5")
+//            let img = UserImage()
+//            img.imageNum = self.userImage5.tag
+//            img.image = self.userImage5.image
+//            img.imageURL = ""
+//            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
+//            
+//            backendless.data.of(UserImage.ofClass()).save(img)
+//        }
+//    }
 
-//            let fileName: String = String(format: "img/%0.0f.jpeg", NSDate().timeIntervalSince1970)
-//            backendless.fileService.upload(fileName, content: UIImageJPEGRepresentation(self.userImage1.image!, 0.1))
-            
-            backendless.data.of(UserImage.ofClass()).save(img)
-        }
-        
-        if(self.userImage2.image != nil && dbContains.contains(self.userImage2.tag)) {
-            print("No image 2")
-            let img = UserImage()
-            img.imageNum = self.userImage2.tag
-            img.image = self.userImage2.image
-            img.imageURL = ""
-            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
-        
-            backendless.data.of(UserImage.ofClass()).save(img)
-        }
-        
-        if(self.userImage3.image != nil && dbContains.contains(self.userImage3.tag)) {
-            print("No image 3")
-            let img = UserImage()
-            img.imageNum = self.userImage3.tag
-            img.image = self.userImage3.image
-            img.imageURL = ""
-            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
-            
-            backendless.data.of(UserImage.ofClass()).save(img)
-        }
-        
-        if(self.userImage4.image != nil && dbContains.contains(self.userImage4.tag)) {
-            print("No image 4")
-            let img = UserImage()
-            img.imageNum = self.userImage4.tag
-            img.image = self.userImage4.image
-            img.imageURL = ""
-            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
-            
-            backendless.data.of(UserImage.ofClass()).save(img)
-        }
-        
-        if(self.userImage5.image != nil && dbContains.contains(self.userImage5.tag)) {
-            print("No image 5")
-            let img = UserImage()
-            img.imageNum = self.userImage5.tag
-            img.image = self.userImage5.image
-            img.imageURL = ""
-            img.user_Image_bcklsFK__ONE_TO_MANY = backendless.userService.currentUser.objectId
-            
-            backendless.data.of(UserImage.ofClass()).save(img)
-        }
+    
+    @IBAction func logout(sender: AnyObject) {
+        let fbId = self.backendless.userService.currentUser.getProperty("facebookId")
+        print(fbId)
+        backendless.userService.logout(
+            { ( user : AnyObject!) -> () in
+                FBSDKAccessToken.setCurrentAccessToken(nil)
+                FBSDKProfile.setCurrentProfile(nil)
+                
+//                let loginPage = self.storyboard?.instantiateViewControllerWithIdentifier("ViewController") as!ViewController
+//                let loginPageNav = UINavigationController(rootViewController: loginPage)
+//                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//                appDelegate.window?.rootViewController = loginPageNav
+                self.view.window!.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+                self.backendless.userService.setStayLoggedIn(false)
+                matches.removeAll()
+                
+                print("User logged out.")
+//                self.performSegueWithIdentifier("logout", sender: self)
+            },
+            error: { ( fault : Fault!) -> () in
+                print("Server reported an error: \(fault)")
+        })
     }
-*/
     
     @IBAction func saveBio(sender: AnyObject) {
         dispatch_async(dispatch_get_main_queue()) {
@@ -383,7 +531,7 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         
         if(bc != nil) {
             let images = bc.data as? [UserImage]
-        
+            
             for img in images! {
                 if(img.imageNum == "1" || img.imageNum == "2" || img.imageNum == "3" || img.imageNum == "4" || img.imageNum == "5" || img.imageNum == "6") {
                     let url = NSURL(string: img.imageURL!)

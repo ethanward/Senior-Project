@@ -17,6 +17,8 @@ class UserTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.sortMatches()
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -48,6 +50,10 @@ class UserTableViewController: UITableViewController {
 //        print(user.user.name)
         //(cell.viewWithTag(1) as! UILabel).text = user.email
         return cell
+    }
+    
+    func sortMatches() {
+        
     }
     
 //    func userImageRetrieval() -> [AnyObject] {

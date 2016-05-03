@@ -19,6 +19,7 @@ class MatchPickerViewController: UIViewController {
     var matchList: [String] = []
     var leftList: [String] = []
     var rightList: [String] = []
+    var touchedList: [String] = []
     
     @IBOutlet weak var kolodaView: KolodaView!
     
@@ -36,6 +37,10 @@ class MatchPickerViewController: UIViewController {
         
         if(backendless.userService.currentUser.getProperty("matchList") as? String != nil) {
             self.matchList = ((backendless.userService.currentUser.getProperty("matchList") as? String)?.characters.split{$0 == " "}.map(String.init))!
+        }
+        
+        if(backendless.userService.currentUser.getProperty("touchedList") as? String != nil) {
+            self.touchedList = ((backendless.userService.currentUser.getProperty("touchedList") as? String)?.characters.split{$0 == " "}.map(String.init))!
         }
         
         self.loadUsers()
@@ -57,7 +62,16 @@ class MatchPickerViewController: UIViewController {
     }
     
     func loadUsers() -> Bool {
-        let whereClause = "objectId NOT LIKE \'\(self.backendless.userService.currentUser.objectId)\' AND matchList IS NULL OR matchList NOT LIKE \'%\(self.backendless.userService.currentUser.objectId)%\'"
+        var whereClause = "objectId NOT LIKE \'\(self.backendless.userService.currentUser.objectId)\' AND (matchList IS NULL OR matchList NOT LIKE \'%\(self.backendless.userService.currentUser.objectId)%\')"
+
+        if backendless.userService.currentUser.getProperty("touchedList") != nil {
+            for touched in self.touchedList {
+                whereClause = whereClause + " AND objectId NOT LIKE \'\(touched)\'"
+            }
+        }
+        
+        print(whereClause)
+        
         let dataQuery = BackendlessDataQuery()
         let queryOptions = QueryOptions()
         queryOptions.pageSize(10)
@@ -75,10 +89,11 @@ class MatchPickerViewController: UIViewController {
             let users = bc.data as! [BackendlessUser]
             
             for user in users {
-                if(!self.leftList.contains(user.objectId) && !self.rightList.contains(user.objectId)) {
+                // need to check if seen this user before?
+//                if(!self.leftList.contains(user.objectId) && !self.rightList.contains(user.objectId)) {
                     let images = userImageRetrieval((user.objectId)!)
                     localUsers.append((user, images))
-                }
+//                }
             }
         }
         
@@ -131,10 +146,16 @@ class MatchPickerViewController: UIViewController {
 extension MatchPickerViewController: KolodaViewDelegate {
     
     func koloda(koloda: KolodaView, didSwipedCardAtIndex index: UInt, inDirection direction: SwipeResultDirection) {
+
+        // Update touchedlist
+        self.touchedList.append(localUsers[Int(index)].user.objectId)
+        self.backendless.userService.currentUser.updateProperties(["touchedList" : self.touchedList.joinWithSeparator(" ")])
+        self.backendless.userService.update(self.backendless.userService.currentUser)
+        
         if(direction == SwipeResultDirection.Right) {
             print(Int(index))
             print(localUsers.count)
-            self.rightSwipe(localUsers[Int(index)].user.objectId)
+            self.rightSwipe(localUsers[Int(index)].user.objectId, index: Int(index))
         }
         else {
             self.leftSwipe(localUsers[Int(index)].user.objectId)
@@ -151,9 +172,19 @@ extension MatchPickerViewController: KolodaViewDelegate {
     func koloda(kolodaDidRunOutOfCards koloda: KolodaView) {
         //Example: reloading
         print("No more users.")
-        if(localUsers.count > 0) {
-            kolodaView.resetCurrentCardNumber() // Try and load more users?
+        
+        localUsers.removeAll()
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.loadUsers()
         }
+        
+        numberOfCards = UInt(localUsers.count)
+        
+        if(localUsers.count > 0) {
+            kolodaView.reloadData() // Try and load more users?
+        }
+
     }
     
     func koloda(koloda: KolodaView, didSelectCardAtIndex index: UInt) {
@@ -161,17 +192,29 @@ extension MatchPickerViewController: KolodaViewDelegate {
         self.performSegueWithIdentifier("MatchView", sender: self)
     }
     
-    func rightSwipe(userId: String) {
+    func rightSwipe(userId: String, index: Int) {
         if(self.rightList.contains(userId)) { // There's a match!
+            print("Its a match!")
+            
+            
             self.rightList = self.rightList.filter( {$0 != userId} )
+            matches.append(self.localUsers[index])
             self.matchList.append(userId)
+            
             self.backendless.userService.currentUser.updateProperties(["matchList" : self.matchList.joinWithSeparator(" ")])
             self.backendless.userService.currentUser.updateProperties(["rightList" : self.rightList.joinWithSeparator(" ")])
             self.backendless.userService.update(self.backendless.userService.currentUser)
             
             let user = self.backendless.userService.findById(userId)
             var mList = user.getProperty("matchList") as? String
-            mList = mList! + " " + self.backendless.userService.currentUser.objectId
+            
+            if(mList != nil) {
+                mList = mList! + " " + self.backendless.userService.currentUser.objectId
+            }
+            else {
+                mList = self.backendless.userService.currentUser.objectId
+            }
+            
             user.updateProperties(["matchList" : mList!])
             self.backendless.userService.update(user)
         }
@@ -203,7 +246,12 @@ extension MatchPickerViewController: KolodaViewDelegate {
         else {
             let user = self.backendless.userService.findById(userId)
             var lList = user.getProperty("leftList") as? String
-            lList = lList! + " " + self.backendless.userService.currentUser.objectId
+            if(lList != nil) {
+                lList = lList! + " " + self.backendless.userService.currentUser.objectId
+            }
+            else {
+                lList = self.backendless.userService.currentUser.objectId
+            }
             user.updateProperties(["leftList" : lList!])
             self.backendless.userService.update(user)
         }
@@ -220,6 +268,10 @@ extension MatchPickerViewController: KolodaViewDataSource {
     func koloda(koloda: KolodaView, viewForCardAtIndex index: UInt) -> UIView {
         var name: String!
         var imageView: UIImageView
+        
+        if(localUsers.count == 0) {
+            self.loadUsers()
+        }
         
         if(localUsers[Int(index)].images.count > 0) {
             let imgUrl = localUsers[Int(index)].images[0].imageURL

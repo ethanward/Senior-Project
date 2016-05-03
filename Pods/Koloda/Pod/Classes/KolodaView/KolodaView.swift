@@ -616,7 +616,6 @@ public class KolodaView: UIView, DraggableCardDelegate {
             }
             
         } else {
-            
             reconfigureCards()
         }
     }

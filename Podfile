@@ -12,6 +12,7 @@ target 'CSCI490 App2' do
     pod "Koloda"
     pod "SlackTextViewController"
     pod "SnapKit"
+    pod "SDWebImage"
     
 #    pod 'TwilioIPMessagingClient', :podspec => 'https://media.twiliocdn.com/sdk/rtc/ios/ip-messaging/v0.13/TwilioIPMessagingClient.podspec'
 #    pod 'TwilioCommon', :podspec => 'https://media.twiliocdn.com/sdk/rtc/ios/common/v0.1/TwilioCommon.podspec'
