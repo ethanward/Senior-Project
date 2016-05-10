@@ -20,6 +20,10 @@ class MatchPickerViewController: UIViewController {
     var leftList: [String] = []
     var rightList: [String] = []
     var touchedList: [String] = []
+    var cardWidth: CGFloat?
+    var cardHeight: CGFloat?
+    var cardX: CGFloat?
+    var firstLoad: Bool = true
     
     @IBOutlet weak var kolodaView: KolodaView!
     
@@ -129,14 +133,14 @@ class MatchPickerViewController: UIViewController {
     }
     
     //MARK: IBActions
-//    @IBAction func leftButtonTapped() {
-//        kolodaView?.swipe(SwipeResultDirection.Left)
-//    }
-//    
-//    @IBAction func rightButtonTapped() {
-//        kolodaView?.swipe(SwipeResultDirection.Right)
-//    }
-//    
+    @IBAction func leftButtonTapped() {
+        kolodaView?.swipe(SwipeResultDirection.Left)
+    }
+    
+    @IBAction func rightButtonTapped() {
+        kolodaView?.swipe(SwipeResultDirection.Right)
+    }
+        
 //    @IBAction func undoButtonTapped() {
 //        kolodaView?.revertAction()
 //    }
@@ -273,6 +277,13 @@ extension MatchPickerViewController: KolodaViewDataSource {
             self.loadUsers()
         }
         
+        if(self.firstLoad) {
+            self.cardHeight = koloda.frame.height
+            self.cardWidth = koloda.frame.width
+            self.cardX = koloda.frame.origin.x
+            self.firstLoad = false
+        }
+        
         if(localUsers[Int(index)].images.count > 0) {
             let imgUrl = localUsers[Int(index)].images[0].imageURL
             let url = NSURL(string: imgUrl!)
@@ -293,16 +304,21 @@ extension MatchPickerViewController: KolodaViewDataSource {
         imageView.contentMode = UIViewContentMode.ScaleAspectFit
         
         name = localUsers[Int(index)].user.getProperty("fb_first_name") as! String
-        let label = UILabel(frame: CGRectMake(koloda.frame.origin.x, koloda.frame.size.height,koloda.frame.size.width,75))
-        label.text = name
-        imageView.addSubview(label)
         
         let borderWidth: CGFloat = 2.0
         imageView.frame = CGRectInset(koloda.frame, -borderWidth, -borderWidth)
         imageView.layer.borderColor = UIColor.lightGrayColor().CGColor;
         imageView.layer.borderWidth = borderWidth;
-        imageView.layer.cornerRadius = 5.0
+        imageView.layer.cornerRadius = 8.0
         imageView.backgroundColor = UIColor.whiteColor()
+        
+        print("Width - \(self.cardWidth)")
+        print("Height - \(self.cardHeight)")
+        print("X - \(self.cardX)")
+        
+        let label = UILabel(frame: CGRectMake(self.cardX!, self.cardHeight!,self.cardWidth!,75))
+        label.text = name
+        imageView.addSubview(label)
         
         return imageView
     }

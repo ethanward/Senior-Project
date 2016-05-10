@@ -12,7 +12,7 @@ import FBSDKLoginKit
 import FacebookImagePicker
 import SDWebImage
 
-class UserViewController: UIViewController, OLFacebookImagePickerControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class UserViewController: UIViewController, OLFacebookImagePickerControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextViewDelegate {
     
     @IBOutlet weak var userName: UINavigationItem!
     @IBOutlet weak var userImage1: UIImageView!
@@ -22,6 +22,7 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     @IBOutlet weak var userImage5: UIImageView!
     @IBOutlet weak var userImage6: UIImageView!
     @IBOutlet weak var userBio: UITextView!
+    @IBOutlet weak var saveBioButton: UIButton!
     
     var backendless = Backendless.sharedInstance()
     var fbUserId: String?
@@ -37,13 +38,14 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
-
+        
+        self.view.bringSubviewToFront(self.saveBioButton)
         self.userName.title = backendless.userService.currentUser.name
         self.userBio.text = backendless.userService.currentUser.getProperty("aboutMe") as? String
         self.fbUserId = backendless.userService.currentUser.getProperty("facebookId") as? String
 
-        loadImages()
-        loadMatches()
+        self.loadImages()
+        self.loadMatches()
         
 //        requestImages()
         
@@ -56,8 +58,8 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
 //        self.userImage4.addGestureRecognizer(singleTap)
 //        self.userImage5.addGestureRecognizer(singleTap)
 
-        imagePicker.delegate = self
-//        FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
+        self.imagePicker.delegate = self
+        self.userBio.delegate = self
     }
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -112,6 +114,9 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if(segue.identifier == "matchPicker") {
+            self.userBio.resignFirstResponder()
+        }
+        else if(segue.identifier == "dogListView") {
             self.userBio.resignFirstResponder()
         }
     }
@@ -380,12 +385,15 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
 //                let loginPageNav = UINavigationController(rootViewController: loginPage)
 //                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 //                appDelegate.window?.rootViewController = loginPageNav
-                self.view.window!.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+//                self.view.window!.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+                
+                self.navigationController!.popToRootViewControllerAnimated(false)
+                
                 self.backendless.userService.setStayLoggedIn(false)
                 matches.removeAll()
                 
                 print("User logged out.")
-//                self.performSegueWithIdentifier("logout", sender: self)
+                self.performSegueWithIdentifier("logout", sender: self)
             },
             error: { ( fault : Fault!) -> () in
                 print("Server reported an error: \(fault)")
@@ -396,8 +404,19 @@ class UserViewController: UIViewController, OLFacebookImagePickerControllerDeleg
         dispatch_async(dispatch_get_main_queue()) {
             self.backendless.userService.currentUser.updateProperties(["aboutMe" : self.userBio.text])
             self.backendless.userService.update(self.backendless.userService.currentUser)
-            self.backendless.userService.update(self.backendless.userService.currentUser)
             self.userBio.resignFirstResponder()
+        }
+    }
+    
+    func textViewDidChange(textView: UITextView) {
+        if(textView.text.characters.count > 499) {
+            self.saveBioButton.enabled = false
+            self.saveBioButton.alpha = 0.4
+        }
+        else {
+            textView.editable = true
+            self.saveBioButton.enabled = true
+            self.saveBioButton.alpha = 1.0
         }
     }
     

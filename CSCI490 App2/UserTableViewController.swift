@@ -31,8 +31,6 @@ class UserTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("UserTableViewCell", forIndexPath: indexPath) as! UserTableViewCell
-//        print(localUsers)
-//        print(indexPath.row)
         let user = matches[indexPath.row]
         
         let images = user.images
@@ -47,9 +45,12 @@ class UserTableViewController: UITableViewController {
         }
 
         cell.userName.text = user.user.name
-//        print(user.user.name)
-        //(cell.viewWithTag(1) as! UILabel).text = user.email
+        
         return cell
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
     func sortMatches() {
@@ -93,8 +94,17 @@ class UserTableViewController: UITableViewController {
             //            print(indexPath)
             let userId = matches[indexPath!.row].user.objectId // Should eventually be "friends", not local users
             let userName = matches[indexPath!.row].user.getProperty("fb_first_name") as! String
+            var userImage = UIImage()
             
-            messageViewController.chatSetup(userId, userName: userName)
+            if(matches[indexPath!.row].images.count > 0) {
+                let url = NSURL(string: (matches[indexPath!.row].images.first?.imageURL)!)
+
+                if let imgData = NSData(contentsOfURL: url!){
+                    userImage = UIImage(data: imgData)!
+                }
+            }
+            
+            messageViewController.chatSetup(userId, userName: userName, userImage: userImage, index: (indexPath?.row)!)
         }
 
     }

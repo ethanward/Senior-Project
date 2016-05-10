@@ -13,6 +13,7 @@ class MatchViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var Name: UILabel!
+    @IBOutlet weak var aboutMe: UITextView!
     
     var user: (user: BackendlessUser, images: [UserImage])?
     var currentIndex = 0
@@ -23,6 +24,7 @@ class MatchViewController: UIViewController {
         addGesturetoImageView()
         
         self.Name.text = user!.user.getProperty("fb_first_name") as? String
+        self.aboutMe.text = user!.user.getProperty("aboutMe") as? String
         self.pageControl.currentPage = 0
         self.pageControl.numberOfPages = user!.images.count
         changeImage(0)

@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		0D27B4861CC55E800014E05F /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */; };
 		0D27B4881CC588730014E05F /* UserMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D27B4871CC588730014E05F /* UserMessage.swift */; };
+		0D3CC01B1CE110A600F00586 /* DogProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3CC01A1CE110A600F00586 /* DogProfileView.swift */; };
+		0D3CC01D1CE114A100F00586 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3CC01C1CE114A100F00586 /* Dog.swift */; };
+		0D3CC01F1CE1356600F00586 /* DogCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3CC01E1CE1356600F00586 /* DogCollectionViewController.swift */; };
+		0D3CC0211CE1371900F00586 /* DogCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3CC0201CE1371900F00586 /* DogCollectionViewCell.swift */; };
 		0D4E0D5C1CC1B699006882F2 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */; };
 		0D4FB4DE1C9A943400E31432 /* UserImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4DD1C9A943400E31432 /* UserImage.swift */; };
 		0D4FB4ED1C9F4C4D00E31432 /* UserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */; };
@@ -65,6 +69,10 @@
 /* Begin PBXFileReference section */
 		0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
 		0D27B4871CC588730014E05F /* UserMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserMessage.swift; sourceTree = "<group>"; };
+		0D3CC01A1CE110A600F00586 /* DogProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogProfileView.swift; sourceTree = "<group>"; };
+		0D3CC01C1CE114A100F00586 /* Dog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
+		0D3CC01E1CE1356600F00586 /* DogCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogCollectionViewController.swift; sourceTree = "<group>"; };
+		0D3CC0201CE1371900F00586 /* DogCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogCollectionViewCell.swift; sourceTree = "<group>"; };
 		0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		0D4FB4DD1C9A943400E31432 /* UserImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserImage.swift; sourceTree = "<group>"; };
 		0D4FB4EC1C9F4C4D00E31432 /* UserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
@@ -364,7 +372,11 @@
 				0D4E0D5B1CC1B699006882F2 /* MessageViewController.swift */,
 				0D27B4851CC55E800014E05F /* MessageTableViewCell.swift */,
 				0D27B4871CC588730014E05F /* UserMessage.swift */,
+				0D3CC01A1CE110A600F00586 /* DogProfileView.swift */,
+				0D3CC01E1CE1356600F00586 /* DogCollectionViewController.swift */,
+				0D3CC0201CE1371900F00586 /* DogCollectionViewCell.swift */,
 				0D4FB4DD1C9A943400E31432 /* UserImage.swift */,
+				0D3CC01C1CE114A100F00586 /* Dog.swift */,
 				0D58027C1C90D271003B92E0 /* Main.storyboard */,
 				0D4FB4F21CA20D0D00E31432 /* OverlayView.xib */,
 				0D58027F1C90D271003B92E0 /* Assets.xcassets */,
@@ -962,10 +974,14 @@
 				0D4FB4F11CA1C22200E31432 /* MatchPickerViewController.swift in Sources */,
 				0D4FB4F61CA2789000E31432 /* MatchPickerOverlayView.swift in Sources */,
 				0D4FB4EF1C9F627D00E31432 /* UserTableViewCell.swift in Sources */,
+				0D3CC01F1CE1356600F00586 /* DogCollectionViewController.swift in Sources */,
 				0D27B4881CC588730014E05F /* UserMessage.swift in Sources */,
 				0D58027B1C90D271003B92E0 /* ViewController.swift in Sources */,
+				0D3CC0211CE1371900F00586 /* DogCollectionViewCell.swift in Sources */,
 				0D27B4861CC55E800014E05F /* MessageTableViewCell.swift in Sources */,
 				0D4FB4DE1C9A943400E31432 /* UserImage.swift in Sources */,
+				0D3CC01D1CE114A100F00586 /* Dog.swift in Sources */,
+				0D3CC01B1CE110A600F00586 /* DogProfileView.swift in Sources */,
 				0D5803901C90E0EB003B92E0 /* UserViewController.swift in Sources */,
 				0D4E0D5C1CC1B699006882F2 /* MessageViewController.swift in Sources */,
 				0D4FB4ED1C9F4C4D00E31432 /* UserTableViewController.swift in Sources */,

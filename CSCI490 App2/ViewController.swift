@@ -104,6 +104,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         if (error == nil)
         {
             print("Login Complete.")
+            loginButton.enabled = false
             
             let token = FBSDKAccessToken.currentAccessToken()
             let fieldsMapping = [
@@ -123,9 +124,16 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
                 response: { (user: BackendlessUser!) -> () in
                     print(user)
                     self.backendless.userService.setStayLoggedIn(true)
-                    self.performSegueWithIdentifier("loggedIn", sender: self)
+                    
+                    if((user.getProperty("firstLogin")) as? Bool == true) {
+                        self.performSegueWithIdentifier("firstLogin", sender: self)
+                    }
+                    else {
+                        self.performSegueWithIdentifier("loggedIn", sender: self)
+                    }
                 },
                 error: { (fault: Fault!) -> Void in
+                    loginButton.enabled = true
                     print("Server reported an error: \(fault)")
             })
             

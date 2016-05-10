@@ -22,6 +22,8 @@ class MessageViewController: SLKTextViewController {
     var connectToUserName: String!
     var responder: Responder!
     var connectionStatus: Bool?
+    var connectToUserImage: UIImage?
+    var index: Int?
     
     // A list of all the messages displayed in the UI
     var messages: [UserMessage] = []
@@ -32,7 +34,30 @@ class MessageViewController: SLKTextViewController {
         super.viewDidLoad()
         
         self.inverted = false
-        self.navBar.title = self.connectToUserName
+        let singleTap = UITapGestureRecognizer(target: self, action:"tapDetected")
+        singleTap.numberOfTapsRequired = 1
+        
+        if(self.connectToUserImage != nil) {
+            let headerView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+            imageView.image = self.connectToUserImage
+            imageView.autoresizingMask = UIViewAutoresizing.FlexibleWidth
+            imageView.layer.borderWidth = 1
+            imageView.layer.masksToBounds = false
+            imageView.layer.borderColor = UIColor.clearColor().CGColor
+            imageView.layer.cornerRadius = imageView.frame.height/2
+            imageView.clipsToBounds = true
+            imageView.contentMode = UIViewContentMode.ScaleAspectFit
+
+            headerView.addGestureRecognizer(singleTap)
+            headerView.addSubview(imageView)
+            self.navBar.titleView = headerView
+            
+        }
+        else {
+            self.navBar.title = self.connectToUserName
+//            self.navBar..addGestureRecognizer(singleTap)
+        }
         
         // Set up UI controls
         self.tableView!.rowHeight = UITableViewAutomaticDimension
@@ -48,19 +73,36 @@ class MessageViewController: SLKTextViewController {
         }
     }
     
+    func tapDetected() {
+        print("Single Tap on navbar")
+        let user = matches[self.index!]
+        print(user.user.name)
+        self.performSegueWithIdentifier("MatchViewFromChat", sender: self)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        let user = matches[self.index!]
+        print(user.user.name)
+        if(segue.identifier == "MatchViewFromChat") {
+            let mvc = (segue.destinationViewController as! MatchViewController)
+            mvc.user = user
+        }
+    }
+    
     // MARK: Setup IP Messaging Channel
     
-    func chatSetup(userId: String, userName: String) {
+    func chatSetup(userId: String, userName: String, userImage: UIImage?, index: Int) {
         // Set the publisher
-        publishOptions = PublishOptions()
-        publishOptions.publisherId = backendless.userService.currentUser.objectId
+        self.publishOptions = PublishOptions()
+        self.publishOptions.publisherId = backendless.userService.currentUser.objectId
 
         // Set subscription
-        connectTouserId = userId
-        connectToUserName = userName
-        subscriptionOptions = SubscriptionOptions()
-        
+        self.connectTouserId = userId
+        self.connectToUserName = userName
+        self.subscriptionOptions = SubscriptionOptions()
+        self.connectToUserImage = userImage
         self.loadMessages()
+        self.index = index
     }
     
     func loadMessages() {
@@ -179,7 +221,6 @@ class MessageViewController: SLKTextViewController {
         }
     }
 
-    
     // MARK: UI Logic
     // Scroll to bottom of table view for messages
     func scrollToBottomMessage() {
@@ -211,7 +252,7 @@ class MessageViewController: SLKTextViewController {
             cell.nameLabel.text = self.backendless.userService.currentUser.getProperty("fb_first_name") as? String
         }
         
-        
+        // CHANGE THIS
         if(cell.nameLabel.text == self.connectToUserName) {
             cell.nameLabel.textColor = UIColor.redColor()
             cell.updateSubviewsLeft()
